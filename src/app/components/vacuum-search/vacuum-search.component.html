@@ -1,0 +1,119 @@
+<div class="container mt-5">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-10">
+      <div class="card p-3 py-4">
+        <h5>Search vacuums</h5>
+        <div class="row g-3 mt-2">
+          <div class="col-md-3">
+            <mat-form-field>
+              <mat-label>Select</mat-label>
+              <select matNativeControl [(ngModel)]="selectedValue" required>
+                  <option value="NO">-</option>
+                  <option value="ON">ON</option>
+                  <option value="OFF">OFF</option>
+                  <option value="DISHARGING">DISHARGING</option>
+              </select>
+            </mat-form-field>          
+          </div>
+
+          <form class="row row-cols-sm-auto">
+            <div class="col-12">
+              <div class="dp-hidden position-absolute">
+                <div class="input-group">
+                  <input
+                    name="datepicker"
+                    class="form-control"
+                    ngbDatepicker
+                    #datepicker="ngbDatepicker"
+                    [autoClose]="'outside'"
+                    (dateSelect)="onDateSelection($event)"
+                    [displayMonths]="2"
+                    [dayTemplate]="t"
+                    outsideDays="hidden"
+                    [startDate]="fromDate!"
+                    tabindex="-1"
+                  />
+                  <ng-template #t let-date let-focused="focused">
+                    <span
+                      class="custom-day"
+                      [class.focused]="focused"
+                      [class.range]="isRange(date)"
+                      [class.faded]="isHovered(date) || isInside(date)"
+                      (mouseenter)="hoveredDate = date"
+                      (mouseleave)="hoveredDate = null"
+                    >
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="input-group">
+                <input
+                  #dpFromDate
+                  class="form-control"
+                  placeholder="yyyy-mm-dd"
+                  name="dpFromDate"
+                  [value]="formatter.format(fromDate)"
+                  (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                />
+                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="input-group">
+                <input
+                  #dpToDate
+                  class="form-control"
+                  placeholder="yyyy-mm-dd"
+                  name="dpToDate"
+                  [value]="formatter.format(toDate)"
+                  (input)="toDate = validateInput(toDate, dpToDate.value)"
+                />
+                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+              </div>
+            </div>
+          </form>
+
+
+          
+          <form (ngSubmit)="searchVacuums()" [formGroup]="form">
+            <div class="mb-3">
+                <label for="email" class="form-label">Name:</label>
+                <input type="email" class="form-control" id="email" name="email" [formControlName]="'email'"required>
+            </div>
+            <button type="submit" class="btn btn-secondary">Search</button>
+          </form>
+
+          <div>
+            <h3>Search Results:</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let result of searchResults">
+                  <td>{{ result.name }}</td>
+                  <td>{{ result.status }}</td>
+                  <td>{{ result.createdAt }}</td>
+                  <td>
+                    <button class="btn btn-success" (click)="startVacuum(result)">START</button>
+                    <button class="btn btn-danger" (click)="stopVacuum(result)">STOP</button>
+                    <button class="btn btn-warning" (click)="dischargeVacuum(result)">DISCHARGE</button>
+                    <button class="btn btn-warning" (click)="removeVacuum(result)">REMOVE</button>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
